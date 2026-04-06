@@ -1,0 +1,9 @@
+{
+  "name": "prompt-master",
+  "description": "PromptMaster — an orchestrator skill that dynamically discovers available agents and delegates prompt engineering and task work to them. Invoke with /prompt-master.",
+  "author": {
+    "name": "Silverthread Labs",
+    "email": "burhan@silverthreadlabs.com"
+  },
+  "version": "1.0.0"
+}

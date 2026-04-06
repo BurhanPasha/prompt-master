@@ -1,0 +1,18 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "prompt-master",
+  "description": "PromptMaster — an orchestrator skill for Claude Code that dynamically discovers available agents and delegates prompt engineering tasks to them",
+  "owner": {
+    "name": "Silverthread Labs",
+    "email": "burhan@silverthreadlabs.com"
+  },
+  "plugins": [
+    {
+      "name": "prompt-master",
+      "description": "Orchestrator skill that discovers available agents at runtime and delegates prompt engineering and task work to them. No hardcoded agent names — adapts to any agent setup.",
+      "source": "./plugin",
+      "category": "productivity",
+      "homepage": "https://github.com/BurhanPasha/prompt-master"
+    }
+  ]
+}

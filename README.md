@@ -8,23 +8,19 @@ Works with any agent setup. Each person on the team can have different agents in
 
 ## Installation
 
-**Step 1 — Clone into your Claude plugins folder**
+**Step 1 — Add the marketplace**
 
-Windows:
 ```bash
-git clone https://github.com/BurhanPasha/prompt-master.git "%USERPROFILE%\.claude\plugins\marketplaces\claude-plugins-official\plugins\prompt-master"
+claude plugin marketplace add BurhanPasha/prompt-master
 ```
 
-Mac / Linux:
+**Step 2 — Install the skill**
+
 ```bash
-git clone https://github.com/BurhanPasha/prompt-master.git ~/.claude/plugins/marketplaces/claude-plugins-official/plugins/prompt-master
+claude plugin install prompt-master
 ```
 
-No restart needed. Claude Code picks it up immediately.
-
-**Step 2 — Make sure you have agents installed**
-
-PromptMaster delegates to whatever agents you have in your `~/.claude/agents/` folder. The more agents you have, the better the delegation. If you have no custom agents, Claude Code's built-in agent types are still available.
+That's it. No restart needed.
 
 ---
 
@@ -48,7 +44,7 @@ In any Claude Code session, type:
 /prompt-master build me a LinkedIn post about our new AI feature launch
 ```
 
-You can also invoke it without arguments and describe your task in the next message:
+You can also invoke it without arguments and describe your task after:
 
 ```
 /prompt-master
@@ -74,34 +70,15 @@ PromptMaster never writes the final artifact itself before agents have run. It n
 
 ## Updating
 
-To get the latest version:
-
-Windows:
 ```bash
-cd "%USERPROFILE%\.claude\plugins\marketplaces\claude-plugins-official\plugins\prompt-master"
-git pull
+claude plugin update prompt-master
 ```
-
-Mac / Linux:
-```bash
-cd ~/.claude/plugins/marketplaces/claude-plugins-official/plugins/prompt-master
-git pull
-```
-
----
 
 ## Uninstalling
 
-Delete the folder:
-
-Windows:
 ```bash
-rmdir /s /q "%USERPROFILE%\.claude\plugins\marketplaces\claude-plugins-official\plugins\prompt-master"
-```
-
-Mac / Linux:
-```bash
-rm -rf ~/.claude/plugins/marketplaces/claude-plugins-official/plugins/prompt-master
+claude plugin uninstall prompt-master
+claude plugin marketplace remove prompt-master
 ```
 
 ---
