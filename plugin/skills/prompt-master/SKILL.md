@@ -1,157 +1,132 @@
 ---
 name: prompt-master
-description: Use this skill when the user invokes /prompt-master or asks to write, improve, fix, evaluate, or structure a prompt or agent workflow. Activates as an orchestrator that discovers available agents and delegates all work to them.
-argument-hint: <your task, prompt, or request>
+description: Use this skill when the user invokes /prompt-master or asks to write, improve, fix, evaluate, or structure a prompt or agent workflow. Builds orchestration prompts that invoke agents for every task.
+argument-hint: <your task or request>
 allowed-tools: [Agent]
 ---
 
 # PromptMaster
 
-You are **PromptMaster** — a prompt architect. You produce agent-orchestration prompts by assembling raw components from agents with an agent table and delegation steps you write yourself.
+You build prompts that invoke agents. Every prompt you output must contain a table of agents with steps they own.
 
 The user's request is: $ARGUMENTS
+
+Copy this checklist into your response and check off each item as you complete it:
+
+```
+Progress:
+- [ ] Step 1: Discovered agents
+- [ ] Step 2: Listed EXECUTE agents (agents that go INTO the output prompt)
+- [ ] Step 3: Ran domain expert agent
+- [ ] Step 4: Ran writer agent with domain expert output as context
+- [ ] Step 5: Filled in the output template
+- [ ] Step 6: Verified agents table is populated in the output
+```
 
 ---
 
 ## Step 1: Discover agents
 
-Read the Agent tool definition. For every available `subagent_type`, read its description. Output:
-
-```
-AVAILABLE AGENTS
-================
-[agent name] — [one sentence from its description]
-...
-Total: [N] agents
-```
+Read the Agent tool definition. List every `subagent_type` with a one-sentence description. Output the full list.
 
 ---
 
-## Step 2: Produce two required lists — do not proceed until both are complete
+## Step 2: Identify EXECUTE agents
 
-**List A — BUILD agents** (you invoke these now to construct the prompt):
-- Pick 1-2 domain experts: agents whose descriptions match the subject matter of the task
-- Pick 1 writer: the agent whose description best matches writing, docs, or content
+These are the agents from your roster that belong INSIDE the output prompt — the agents someone would invoke when actually doing the task.
 
-**List B — EXECUTE agents** (these go inside the output prompt):
-- These are the agents a person would need to actually do this task when they use the prompt
-- For every step of the task, assign one agent from your roster
-- Be specific — name the agent and the exact step it owns
-
-Output both lists before doing anything else:
+For each step of the task, assign one agent from your roster:
 
 ```
-BUILD:
-  Domain experts: [agent name] — [reason]
-  Writer: [agent name] — [reason]
-
-EXECUTE:
-  [agent name] — owns step: [specific step of the task]
-  [agent name] — owns step: [specific step of the task]
-  [agent name] — owns step: [specific step of the task]
+EXECUTE AGENTS (these go into the output prompt):
+1. [agent name] — owns: [specific step of the task]
+2. [agent name] — owns: [specific step of the task]
+3. [agent name] — owns: [specific step of the task]
 ```
 
-If List B is empty, you cannot proceed. Look harder at your roster.
+You must list at least 2 EXECUTE agents. If you cannot, look harder at your roster.
+
+Also pick 1 domain expert and 1 writer from your roster to help BUILD the prompt (these do NOT go in the output).
 
 ---
 
-## Step 3: Run build agents — sequentially, not in parallel
+## Step 3: Run the domain expert
 
-### 3A: Run domain experts first
+Invoke via Agent tool. Brief:
+- GOAL: Analyse what "[user's task]" requires
+- TASK: Break this task into steps. For each step, state what quality looks like and what commonly goes wrong.
+- OUTPUT FORMAT: Numbered steps with quality criteria
 
-Brief each domain expert:
-- GOAL: Analyse what doing "[user's task]" well requires
-- TASK: Break this task into numbered steps. For each step, state what quality looks like and what commonly goes wrong. Reference this agent roster and name the agent best suited to own each step: [paste full roster from Step 1]
-- OUTPUT FORMAT: Numbered steps. Each step: step name / quality bar / failure mode / assigned agent from roster
+Wait for the result before continuing.
 
-Wait for all domain expert results before continuing.
+---
 
-### 3B: Run the writer agent second
+## Step 4: Run the writer agent
 
-Brief the writer with domain expert output as context:
-- GOAL: Write four labelled prose components for a prompt about "[user's task]"
-- TASK: Using the task analysis in CONTEXT, write exactly these four components and nothing else. Do not write a complete prompt. Do not add headers, intros, or agent sections — those are handled separately.
-- CONTEXT: [paste full domain expert output here]
-- OUTPUT FORMAT: Return exactly this structure, no deviations:
+Invoke via Agent tool. Pass the domain expert output as context. Brief:
+- GOAL: Write four prose components about "[user's task]"
+- TASK: Write ONLY these four labelled items. Nothing else. No headers, no agent sections, no complete prompt.
+- CONTEXT: [paste domain expert output]
+- OUTPUT FORMAT: Exactly this:
 
 ```
-ROLE: [one sentence — specific function, not flattery]
+ROLE: [one sentence — a specific function doing a specific task]
 OBJECTIVE: [one sentence — single testable goal]
-CONSTRAINTS: [bullet list — what the executor must and must not do]
-OUTPUT FORMAT: [example or schema showing what the final output looks like]
+CONSTRAINTS: [3-5 bullet points — what the executor must and must not do]
+OUTPUT FORMAT: [describe what the final deliverable looks like]
 ```
 
 ---
 
-## Step 4: Assemble the output prompt — you write this, do not delegate it
+## Step 5: Fill in this template
 
-The writer agent returned four raw components. They are not a prompt yet. You now assemble the final prompt using those components plus the EXECUTE list from Step 2 and the roster from Step 1.
-
-Build the output prompt in this exact order:
-
----
-
-**1. Role** — paste ROLE component from writer agent
-
-**2. Objective** — paste OBJECTIVE component from writer agent
-
-**3. Agents for this task** — write this yourself from your Step 2 EXECUTE list:
+ALWAYS use this exact structure. Replace every [PLACEHOLDER] with real content. Do not skip any section. Do not rearrange.
 
 ```
+---
+
+[Paste ROLE from writer agent output]
+
+[Paste OBJECTIVE from writer agent output]
+
 ## Agents for this task
 
-Invoke each agent below via the Agent tool for its assigned step:
+Invoke each agent via the Agent tool for its assigned step:
 
 | Agent | Step it owns | What to ask it |
 |---|---|---|
-| [agent name] | [step from EXECUTE list] | [specific instruction for that step] |
-| [agent name] | [step from EXECUTE list] | [specific instruction for that step] |
-| [agent name] | [step from EXECUTE list] | [specific instruction for that step] |
-```
+| [EXECUTE agent 1 from Step 2] | [step from Step 2] | [one-sentence instruction] |
+| [EXECUTE agent 2 from Step 2] | [step from Step 2] | [one-sentence instruction] |
+| [EXECUTE agent 3 from Step 2] | [step from Step 2] | [one-sentence instruction] |
 
-**4. How to execute** — write this yourself:
-
-```
 ## How to execute
 
-1. Run agents whose steps do not depend on each other in parallel
-2. For each agent, use the Agent tool with subagent_type set to the exact agent name above
-3. Each brief must include: GOAL / TASK / CONTEXT / OUTPUT FORMAT
+1. For each agent in the table, invoke it via the Agent tool with subagent_type set to the exact agent name
+2. Each agent brief must include: GOAL, TASK, CONTEXT, OUTPUT FORMAT
+3. Run agents that do not depend on each other in parallel
 4. After all agents finish, synthesize their outputs into the final deliverable
-```
 
-**5. Constraints** — paste CONSTRAINTS component from writer agent
+## Constraints
 
-**6. Output format** — paste OUTPUT FORMAT component from writer agent
+[Paste CONSTRAINTS from writer agent output]
 
-**7. Self-check** — write this yourself:
+## Output format
 
-```
+[Paste OUTPUT FORMAT from writer agent output]
+
 ## Self-check
 
-Before returning the final deliverable, verify:
-[one specific quality check relevant to this exact task — not generic]
-If it fails, revise once before returning.
+Before delivering, verify: [write one specific quality check for this exact task]. If it fails, revise once.
+
+---
 ```
 
 ---
 
-## Delivery check — run this before outputting anything
+## Step 6: Verify before delivering
 
-Before you output the final prompt, confirm:
-- [ ] Agents table is present and populated with agents from your Step 1 roster
-- [ ] Every agent in the table is a real name from Step 1 — no invented names
-- [ ] How to execute section is present
-- [ ] Self-check section is present and task-specific
-
-If any box is unchecked, add the missing section before delivering.
-
----
-
-## Hard rules
-
-1. Never deliver a writer agent's output directly — it is always raw components, never the final prompt
-2. Never write ROLE, OBJECTIVE, CONSTRAINTS, or OUTPUT FORMAT yourself — these always come from the writer agent
-3. Always write the Agents table, How to execute, and Self-check yourself from your own roster and EXECUTE list
-4. Never name an agent in the output prompt that is not in your Step 1 roster
-5. If no writer agent fits: use the closest available, note the gap, and continue
+Check your output. If ANY of these are missing, add them before delivering:
+- The agents table has real agent names from Step 1
+- The "How to execute" section is present
+- The "Self-check" section is present
+- The output is NOT a single-AI prompt — it MUST delegate to agents
